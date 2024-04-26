@@ -1,8 +1,19 @@
+### Project Overview
 
-API Framework -> Fast API
-Testing Framework -> PyTest
+* Fast API (API Framework)
 
-# Running the server
+* PyTest (Testing Framework)
 
-  git clone 
+### Running the server
+
+  `git clone git@github.com:ranjitmarathay/vantagescore-challenge.git`
+
+  `cd vantagescore-challenge/app`
+
+  `uvicorn main:app --reload`
+
+
+### Running the tests
+
+  `pytest`
 
