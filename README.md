@@ -118,7 +118,7 @@
 - **Endpoint**: `PUT /property`
 - **Description**: Updates an existing property.
 - **Required Body**
-- **Property** (object): Any number of fields in the Property Object
+  - **Property** (object): Any number of fields in the Property Object
 - **Example Request Body**
 
   ```json
@@ -145,15 +145,15 @@
 
 - **Endpoint**: `DELETE /property/{property_id}`
 - **Description**: Deletes a specific property from the database based on the provided property ID.
-### Parameters
-- **property_id** (path parameter): The unique identifier of the property to be deleted.
-### Response
+- **Parameters**
+  - **property_id** (path parameter): The unique identifier of the property to be deleted.
+- **Response**
 - **Status Codes**:
   - `200 OK`: Indicates that the property was successfully deleted.
   - `404 Not Found`: Indicates that no property was found corresponding to the provided `property_id`.
-### Example Request
+- **Example Request**
   - **URL**: `DELETE /property/123`
-### Example Responses
+- **Example Responses**
 
 - **Property Deleted Successfully**:
   ```json
