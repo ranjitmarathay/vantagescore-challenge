@@ -256,8 +256,9 @@ def check_date_format(cls, v):
 def hello():
     return {"message": "Hello World"}
 
-@app.get("/property")
+@app.get("/property", summary="Retrieve all properties", description="Returns a list of all properties in the database with detailed information.")
 def get_properties(db: sqlite3.Connection = Depends(get_db)):
+    """Fetches all properties from the database."""
     cursor = db.cursor()
     
     cursor.execute(f"""
@@ -270,8 +271,9 @@ def get_properties(db: sqlite3.Connection = Depends(get_db)):
 
     return data
 
-@app.get("/property/{property_id}")
+@app.get("/property/{property_id}", summary="Retrieve a single property", description="Returns detailed information about a property specified by its ID.")
 def get_property(property_id: int, db: sqlite3.Connection = Depends(get_db)):
+    """Fetches a single property by its ID from the database."""
     cursor = db.cursor()
     cursor.execute("SELECT * FROM properties WHERE id = ?", (property_id,))
 
@@ -284,8 +286,9 @@ def get_property(property_id: int, db: sqlite3.Connection = Depends(get_db)):
         return data
     
 
-@app.post("/property")
+@app.post("/property", summary="Create a new property", description="Adds a new property to the database and returns the created property details.")
 def create_property(property: Property, db: sqlite3.Connection = Depends(get_db)):
+    """Creates a new property with the provided details. Inputs are validated for greater than 0 values."""
     cursor = db.cursor()
     try: 
         cursor.execute("""
@@ -309,8 +312,9 @@ def create_property(property: Property, db: sqlite3.Connection = Depends(get_db)
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
 
 
-@app.put("/property/{property_id}")
+@app.put("/property/{property_id}", summary="Update an existing property", description="Updates an existing property specified by its ID with provided data.")
 def update_property(property_id: int, property: UpdateProperty, db: sqlite3.Connection = Depends(get_db)):
+    """Updates an existing property without needing the entire Property object."""
     cursor = db.cursor()
     update_data = property.model_dump(exclude_unset=True)
     if not update_data:
@@ -330,8 +334,9 @@ def update_property(property_id: int, property: UpdateProperty, db: sqlite3.Conn
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.delete("/property/{property_id}")
+@app.delete("/property/{property_id}", summary="Delete a property", description="Deletes a property specified by its ID from the database.")
 def delete_property(property_id: int, db: sqlite3.Connection = Depends(get_db)):
+    """Deletes a property by its ID."""
     cursor = db.cursor()
     cursor.execute("SELECT * FROM properties WHERE id = ?", (property_id,))
     property = cursor.fetchone()
