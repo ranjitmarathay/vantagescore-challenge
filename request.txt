@@ -1,0 +1,18 @@
+{
+  "name": "Airbnb",
+  "address": "9107 Japonica Ct Austin Texas 78748",
+  "unit": "A",
+  "property_value": 586000,
+  "year_built": "1987",
+  "bed": 2,
+  "bath": 2,
+  "sleeps": 6,
+  "sqft": 1200,
+  "lot_size": 3500,
+  "description": "Beautifully updated condo",
+  "image_url": "https://example.com/",
+  "url": "https://example.com/",
+  "last_updated": "2024-04-26T04:54:17.673Z",
+  "nightly_rate": 200,
+  "property_type": "Duplex"
+}
