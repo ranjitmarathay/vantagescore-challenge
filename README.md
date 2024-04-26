@@ -85,7 +85,58 @@
     "property_type": "House"
   }
 
+### 3. Create a Property
 
+- **Endpoint**: `POST /property`
+- **Description**: Adds a new property to the database.
+### Required Body
+- **Property** (object): A property object containing all necessary property details.
+### Example Request Body
 
+  ```json
+  {
+    "title": "Cozy Cottage",
+    "address": "456 Mountain Road",
+    "unit": "A",
+    "property_value": 300000,
+    "year_built": "1985",
+    "bed": 2,
+    "bath": 1,
+    "sleeps": 4,
+    "sqft": 1200,
+    "lot_size": 2000,
+    "description": "A cozy cottage in the mountains.",
+    "image_url": "https://example.com/images/cottage.jpg",
+    "url": "https://example.com/property/cottage",
+    "last_updated": "2024-04-26T04:54:17.673000Z",
+    "nightly_rate": 150,
+    "property_type": "Cottage"
+  }
 
+### 4. Update a Property
 
+- **Endpoint**: `PUT /property`
+- **Description**: Updates an existing property.
+### Required Body
+- **Property** (object): Any number of fields in the Property Object
+### Example Request Body
+
+  ```json
+  {
+    "title": "Cozy Cottage",
+    "address": "456 Mountain Road",
+    "unit": "A",
+    "property_value": 300000,
+    "year_built": "1985",
+    "bed": 2,
+    "bath": 1,
+    "sleeps": 4,
+    "sqft": 1200,
+    "lot_size": 2000,
+    "description": "A cozy cottage in the mountains.",
+    "image_url": "https://example.com/images/cottage.jpg",
+    "url": "https://example.com/property/cottage",
+    "last_updated": "2024-04-26T04:54:17.673000Z",
+    "nightly_rate": 150,
+    "property_type": "Cottage"
+  }
