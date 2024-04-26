@@ -20,6 +20,12 @@
 
   `uvicorn main:app --reload`
 
+## Manually Test the API
+
+  Open http://127.0.0.1/docs
+
+  Be sure to register and login before running any /property endpoints
+
 
 ## Running the tests
 

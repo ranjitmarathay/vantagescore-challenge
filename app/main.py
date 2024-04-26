@@ -86,22 +86,30 @@ def login(username: str, password: str, db: sqlite3.Connection = Depends(get_db)
 
 
 class Property(BaseModel):
-  title: str
-  address: str
-  unit: Optional[str] = None
-  property_value: int
-  year_built: str
-  bed: int
-  bath: int
-  sleeps: int
-  sqft: int
-  lot_size: int
-  description: str
-  image_url: str
-  url: str
-  last_updated: datetime = Field(default_factory=datetime.now)
-  nightly_rate: float
-  property_type: str
+    title: str
+    address: str
+    unit: Optional[str] = None
+    property_value: int
+    year_built: str
+    bed: int
+    bath: int
+    sleeps: int
+    sqft: int
+    lot_size: int
+    description: str
+    image_url: str
+    url: str
+    last_updated: datetime = Field(default_factory=datetime.now)
+    nightly_rate: float
+    property_type: str
+
+    @field_validator('property_value', 'sqft', 'lot_size', 'bed', 'bath', 'sleeps')
+    def check_positive(cls, v):
+        if not isinstance(v, int):
+            raise ValueError('must be an integer')
+        if v < 0:
+            raise ValueError('must be positive')
+        return v
 
 class UpdateProperty(BaseModel):
     title: Optional[str] = None
@@ -121,24 +129,17 @@ class UpdateProperty(BaseModel):
     nightly_rate: Optional[int] = None
     property_type: Optional[str] = None
 
-@field_validator('year_built', 'price', 'sqft', 'lot_size', 'bed', 'bath', 'sleeps')
-def check_positive(cls, v):
-    if v < 0:
-        raise ValueError('must be positive')
-    return v
-
-@field_validator('last_updated')
-def check_date_format(cls, v):
-    # Assuming ISO 8601 format: YYYY-MM-DDTHH:MM:SS
-    try:
-        datetime.fromisoformat(v)
-    except ValueError:
-        raise ValueError('last_updated must be a valid ISO 8601 date-time string')
-    return v
+    @field_validator('property_value', 'sqft', 'lot_size', 'bed', 'bath', 'sleeps')
+    def check_positive(cls, v):
+        if not isinstance(v, int):
+            raise ValueError('must be an integer')
+        if v < 0:
+            raise ValueError('must be positive')
+        return v
 
 @app.get("/hello")
 def hello(username: Annotated[str, Depends(get_current_active_user)]):
-    return {"message": "Hello World"}
+    return {"message": "Vantage Score Challenge"}
 
 @app.get("/property", summary="Retrieve all properties", description="Returns a list of all properties in the database with detailed information.")
 def get_properties(db: sqlite3.Connection = Depends(get_db), currentUser = Depends(get_current_active_user)):
@@ -174,6 +175,7 @@ def get_property(property_id: int, db: sqlite3.Connection = Depends(get_db), cur
 def create_property(property: Property, db: sqlite3.Connection = Depends(get_db), currentUser = Depends(get_current_active_user)):
     """Creates a new property with the provided details. Inputs are validated for greater than 0 values."""
     cursor = db.cursor()
+    property = Property(**property.model_dump())
     try: 
         cursor.execute("""
             INSERT INTO properties (
@@ -200,18 +202,27 @@ def create_property(property: Property, db: sqlite3.Connection = Depends(get_db)
 def update_property(property_id: int, property: UpdateProperty, db: sqlite3.Connection = Depends(get_db), currentUser = Depends(get_current_active_user)):
     """Updates an existing property without needing the entire Property object."""
     cursor = db.cursor()
-    update_data = property.model_dump(exclude_unset=True)
-    if not update_data:
+
+    cursor.execute("SELECT * FROM properties WHERE id = ?", (property_id,))
+    property_db_check = cursor.fetchone()
+
+    if property_db_check is None:
+        raise HTTPException(status_code=404, detail="Property not found")
+    
+    update_property = property.model_dump(exclude_none=True)
+
+    if not update_property:
         raise HTTPException(status_code=400, detail="No data provided for update")
 
     # Need to dynamically create the set clause based on the keys in the update_data
-    set_clause = ", ".join([f"{key} = :{key}" for key in update_data.keys()])
-    update_data['id'] = property_id  
+    set_clause = ", ".join([f"{key} = :{key}" for key in update_property.keys()])
+    update_property['id'] = property_id  
+
 
     sql_statement = f"UPDATE properties SET {set_clause} WHERE id = :id"
 
     try:
-        cursor.execute(sql_statement, update_data)
+        cursor.execute(sql_statement, update_property)
         db.commit()
         return {"message": "Property updated", "property": property}
     except Exception as e:

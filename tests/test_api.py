@@ -8,7 +8,7 @@ def test_hello(client):
     print("printing response from hello", response)
     assert response.status_code == 200
     print("printing response from hello", response.json())
-    assert response.json() == {"message": "Hello World"}
+    assert response.json() == {"message": "Vantage Score Challenge"}
 
 def test_get_properties(client):
     response = client.get("/property")
@@ -24,6 +24,10 @@ def test_get_one_property(client):
     for key, value in response_data.items():
         if key != 'last_updated':
             assert value == expected_data[key]
+
+def test_get_one_property_dne(client):
+    response = client.get("/property/100")
+    assert response.status_code == 404
 
 def test_create_property(client):
     insert_data = {
@@ -53,16 +57,22 @@ def test_create_property(client):
             assert v == insert_data[k]
     assert response.status_code == 200
 
-
 def test_update_property(client):
     update_data = {
         "nightly_rate": 300
     }
     response = client.put("/property/1", json=update_data)
     response_data = response.json()
-    response_data['message'] = 'Property updated'
+    assert response_data['message'] == 'Property updated'
     assert response_data['property']['nightly_rate'] == 300
     assert response.status_code == 200
+
+def test_update_property_dne(client):
+    update_data = {
+        "nightly_rate": 300
+    }
+    response = client.put("/property/100", json=update_data)
+    assert response.status_code == 404
 
 def test_delete_property(client):
 
