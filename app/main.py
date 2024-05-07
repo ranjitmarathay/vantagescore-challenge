@@ -9,7 +9,6 @@ from contextlib import asynccontextmanager
 from database.database import get_db, create_tables
 from datetime import datetime
 import sqlite3
-import secrets
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -60,6 +59,10 @@ def get_current_active_user(
             headers={"WWW-Authenticate": "Basic"},
         )
     return credentials.username
+
+@app.get("/")
+def root():
+    return "Property API v1"
 
 @app.post("/register")
 def register_user(user: User, db: sqlite3.Connection = Depends(get_db)):

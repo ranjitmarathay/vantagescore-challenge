@@ -17,6 +17,8 @@
   `pip install -r requirements.txt`
 
   `cd app`
+  
+  `export PYTHONPATH="<root-user-directory>/vantagescore-challenge:$PYTHONPATH"`
 
   `uvicorn main:app --reload`
 
